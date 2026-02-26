@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opo IB Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            alert("Error in app.js line " + line + ": " + msg);
+            return false;
+        };
+        window.addEventListener('unhandledrejection', function (event) {
+            alert("Unhandled Promise Rejection: " + event.reason);
+        });
+    </script>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-card">
+            <h1>OPO Finance</h1>
+            <p>Sign in to Opo IB Portal</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email</label>
+
+                    <input type="email" id="email" placeholder="example@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" placeholder="••••••••" required
+                            style="padding-right: 2.8rem;">
+                        <span id="toggle-pass" onclick="togglePassword()"
+                            style="position:absolute; right:0.85rem; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--text-muted); font-size:1rem;">
+                            <i id="eye-icon" class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div style="display:flex; align-items:center; margin-bottom:1.25rem;">
+                    <label
+                        style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.875rem; color:var(--text-muted); margin:0;">
+                        <input type="checkbox" id="remember-me"
+                            style="width:16px;height:16px;accent-color:#6366f1;cursor:pointer;">
+                        Remember me
+                    </label>
+                </div>
+
+                <button type="submit" class="btn">Login</button>
+                <p id="login-error" style="color: #ef4444; font-size: 0.8rem; margin-top: 1rem; display: none;"></p>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Dashboard -->
+    <div id="dashboard-page" class="dashboard container">
+        <header>
+            <h1>Opo IB Portal</h1>
+            <div class="user-info">
+                <span id="user-role-badge"></span>
+                <span id="user-email"></span>
+                <button id="control-panel-btn" onclick="openControlPanel()"
+                    style="display:none; padding:0.4rem 1rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; color:white; border-radius:0.5rem; cursor:pointer; font-size:0.85rem; font-weight:600; gap:0.4rem;">
+                    <i class="fa fa-sliders"></i> Control Panel
+                </button>
+                <a class="logout-link" onclick="logout()">Logout</a>
+            </div>
+        </header>
+
+        <!-- ── tab navigation ── -->
+        <div style="display:flex; gap:0; margin-bottom:1.5rem; border-bottom:2px solid #27272a;">
+            <button id="tab-reminder" onclick="switchTab('reminder')"
+                style="padding:0.6rem 1.5rem; background:none; border:none; color:#fafafa; font-size:0.95rem; font-weight:600; cursor:pointer; border-bottom:3px solid #6366f1; margin-bottom:-2px;">
+                IB Contracts
+            </button>
+            <button id="tab-campaigns" onclick="switchTab('campaigns')"
+                style="padding:0.6rem 1.5rem; background:none; border:none; color:#71717a; font-size:0.95rem; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px;">
+                IB Campaigns
+            </button>
+        </div>
+
+        <!-- ════ IB CONTRACTS section ════ -->
+        <div id="section-reminder">
+            <!-- View Toggle Controls -->
+            <div class="controls">
+                <div class="search-box" id="contract-search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search by ID, email, or text...">
+                </div>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    <button class="btn" id="calendar-view-btn"
+                        style="width:auto; padding:0.6rem 1.25rem; background:#27272a; border:1px solid #3f3f46;"
+                        onclick="toggleCalendarView()">
+                        <i class="fa fa-calendar-alt"></i> Calendar View
+                    </button>
+                    <button class="btn"
+                        style="width:auto; padding:0.6rem 1.25rem; background:#27272a; border:1px solid #3f3f46;"
+                        onclick="window.open('http://localhost:5000/api/email-preview','_blank')"
+                        title="Preview email template">
+                        <i class="fa fa-envelope-open-text"></i> Preview Template
+                    </button>
+                    <button class="btn" style="width:auto; padding:0.6rem 1.5rem;" onclick="openModal()">
+                        <i class="fa fa-plus"></i> Add New Contract
+                    </button>
+                    <button class="btn" id="report-btn"
+                        style="width:auto;padding:0.6rem 1.5rem;background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border:1px solid #3b82f6;"
+                        onclick="openReportModal()">
+                        <i class="fa fa-chart-bar"></i> Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IB ID</th>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Contract</th>
+                            <th>Reminder Date</th>
+                            <th>Reminder Status</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ib-table-body"></tbody>
+                </table>
+            </div>
+            <div id="pagination" class="pagination"></div>
+
+            <!-- ── Calendar View (hidden by default) ─────── -->
+            <div id="calendar-container" style="display:none;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+                    <button onclick="calNav(-1)"
+                        style="background:#27272a;border:1px solid #3f3f46;color:white;padding:0.4rem 0.9rem;border-radius:0.5rem;cursor:pointer;font-size:1rem;">&#8249;</button>
+                    <h3 id="cal-title" style="font-size:1.1rem;font-weight:700;color:#a5b4fc;"></h3>
+                    <button onclick="calNav(1)"
+                        style="background:#27272a;border:1px solid #3f3f46;color:white;padding:0.4rem 0.9rem;border-radius:0.5rem;cursor:pointer;font-size:1rem;">&#8250;</button>
+                </div>
+                <!-- Day-of-week headers -->
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;">
+                    <div class="cal-dow">Sun</div>
+                    <div class="cal-dow">Mon</div>
+                    <div class="cal-dow">Tue</div>
+                    <div class="cal-dow">Wed</div>
+                    <div class="cal-dow">Thu</div>
+                    <div class="cal-dow">Fri</div>
+                    <div class="cal-dow">Sat</div>
+                </div>
+                <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+            </div>
+
+            <!-- Todays Reminders Section -->
+            <div style="margin-top: 4rem; margin-bottom: 2rem;">
+                <h2 style="color: var(--accent); margin-bottom: 1rem;"><i class="fa fa-calendar-day"></i> Today's
+                    Reminders</h2>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IB ID</th>
+                                <th>Reminder Date</th>
+                                <th>Status</th>
+                                <th>Text</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todays-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payment Calendar Section -->
+            <div style="margin-top: 4rem; margin-bottom: 2rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                    <h2 style="color: var(--accent);"><i class="fa fa-calendar-alt"></i> Payment Calendar</h2>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn" style="width: auto; padding: 0.4rem 0.8rem;" onclick="prevCalMonth()"><i
+                                class="fa fa-chevron-left"></i></button>
+                        <span id="cal-month-label"
+                            style="font-weight: 600; min-width: 120px; text-align: center; align-self: center; font-size: 0.95rem;"></span>
+                        <button class="btn" style="width: auto; padding: 0.4rem 0.8rem;" onclick="nextCalMonth()"><i
+                                class="fa fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="controls" style="margin-bottom: 1rem;">
+                    <div class="search-box" style="flex: 1; min-width: 250px; max-width: none;">
+                        <i class="fa fa-search"></i>
+                        <input type="text" id="cal-search" placeholder="Search IB ID or Name..."
+                            oninput="debounceLoadCalendar()">
+                    </div>
+                    <select id="cal-status" onchange="loadCalendar()"
+                        style="background:#27272a;border:1px solid #3f3f46;color:white;padding:0.6rem 0.9rem;border-radius:0.5rem;font-size:0.875rem;">
+                        <option value="">All Statuses</option>
+                        <option value="Approval Pending">🟡 Approval Pending</option>
+                        <option value="Payment Pending">🔵 Payment Pending</option>
+                        <option value="Paid">🟢 Paid</option>
+                        <option value="Rejected">🔴 Rejected</option>
+                    </select>
+                </div>
+
+                <div id="payment-calendar-grid" class="calendar-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div><!-- /section-reminder -->
+
+        <!-- ════ IB CAMPAIGNS section ════ -->
+        <div id="section-campaigns" style="display:none;">
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="camp-search" placeholder="Search by IB ID...">
+                </div>
+                <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                    <select id="camp-sort" onchange="fetchCampaigns(1)"
+                        style="background:#27272a;border:1px solid #3f3f46;color:white;padding:0.55rem 0.9rem;border-radius:0.5rem;font-size:0.875rem;">
+                        <option value="created_at-desc">Newest first</option>
+                        <option value="campaign_start-asc">Start Date ↑</option>
+                        <option value="campaign_start-desc">Start Date ↓</option>
+                        <option value="campaign_end-asc">End Date ↑</option>
+                        <option value="campaign_end-desc">End Date ↓</option>
+                    </select>
+                    <button id="camp-add-btn" class="btn" style="width:auto;padding:0.6rem 1.5rem;"
+                        onclick="openCampModal()">
+                        <i class="fa fa-plus"></i> Add Campaign
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IB ID</th>
+                            <th>Name</th>
+                            <th>Campaign Start</th>
+                            <th>Campaign End</th>
+                            <th>Offer</th>
+                            <th>Keypoints</th>
+                            <th>IB Manager</th>
+                            <th>Status</th>
+                            <th id="camp-actions-header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="camp-table-body"></tbody>
+                </table>
+            </div>
+            <div id="camp-pagination" class="pagination"></div>
+
+            <!-- Download Bar -->
+            <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1rem;">
+                <button onclick="openDownload('csv')"
+                    style="padding:0.55rem 1.2rem;background:#1e293b;border:1px solid #334155;color:#94a3b8;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:600;display:flex;align-items:center;gap:0.5rem;">
+                    <i class="fa fa-file-csv" style="color:#4ade80;"></i> Export CSV
+                </button>
+                <button onclick="openDownload('pdf')"
+                    style="padding:0.55rem 1.2rem;background:#1e293b;border:1px solid #334155;color:#94a3b8;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:600;display:flex;align-items:center;gap:0.5rem;">
+                    <i class="fa fa-file-pdf" style="color:#f87171;"></i> Export PDF
+                </button>
+            </div>
+        </div><!-- /section-campaigns -->
+
+    </div><!-- /dashboard -->
+
+
+    <!-- Add/Edit IB Reminder Modal -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add IB Contract</h2>
+                <i class="fa fa-times" style="cursor: pointer;" onclick="closeModal()"></i>
+            </div>
+            <form id="add-form">
+                <input type="hidden" id="edit_id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>IB ID (Numbers only)</label>
+                        <input type="number" id="ib_id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>IB Name</label>
+                        <input type="text" id="contract_name" placeholder="e.g. Ali Ahmadi">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="end_date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reminder Date</label>
+                    <input type="date" id="reminder_date" required>
+                </div>
+                <div class="form-group">
+                    <label>Contract (Max 20MB)</label>
+                    <input type="file" id="contract" accept=".pdf,.doc,.docx,.jpg,.png">
+                </div>
+                <div class="form-group">
+                    <label>Reminder Text (Max 1000 words)</label>
+                    <textarea id="reminder_text" rows="4"
+                        style="width: 100%; background: #27272a; border: 1px solid #27272a; border-radius: 0.5rem; color: white; padding: 0.75rem; resize: vertical;"></textarea>
+                </div>
+
+                <!-- Target & Payments Buttons -->
+                <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+                    <button type="button" onclick="openTargetModal()"
+                        style="flex:1;padding:0.65rem 1rem;background:#1e1b4b;border:1px solid #6366f1;color:#a5b4fc;border-radius:0.5rem;cursor:pointer;font-weight:600;font-size:0.85rem;">
+                        <i class="fa fa-bullseye"></i> Set Targets
+                        <span id="target-badge"
+                            style="display:none;margin-left:0.5rem;background:#6366f1;color:#fff;border-radius:999px;padding:1px 8px;font-size:0.75rem;"></span>
+                    </button>
+                    <button type="button" onclick="openPaymentsModal()"
+                        style="flex:1;padding:0.65rem 1rem;background:#052e16;border:1px solid #16a34a;color:#4ade80;border-radius:0.5rem;cursor:pointer;font-weight:600;font-size:0.85rem;">
+                        <i class="fa fa-money-bill-wave"></i> Set Payments
+                        <span id="payments-badge"
+                            style="display:none;margin-left:0.5rem;background:#16a34a;color:#fff;border-radius:999px;padding:1px 8px;font-size:0.75rem;"></span>
+                    </button>
+                </div>
+
+                <button type="submit" class="btn">Save Contract</button>
+            </form>
+        </div>
+    </div>
+    <!-- ── Report Modal ───────────────────────────────────────── -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content"
+            style="max-width:1000px;width:96vw;max-height:92vh;display:flex;flex-direction:column;padding:0;overflow:hidden;">
+
+            <!-- Sticky Header -->
+            <div
+                style="padding:1.25rem 1.5rem;border-bottom:1px solid #27272a;background:#18181b;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <i class="fa fa-chart-bar" style="color:#3b82f6;font-size:1.1rem;"></i>
+                    <h2 style="margin:0;font-size:1.1rem;">IB Contracts Report</h2>
+                    <span id="report-generated-at" style="color:#52525b;font-size:0.78rem;"></span>
+                </div>
+                <i class="fa fa-times" style="cursor:pointer;font-size:1.1rem;" onclick="closeReportModal()"></i>
+            </div>
+
+            <!-- Filter Bar -->
+            <div style="padding:1rem 1.5rem;border-bottom:1px solid #27272a;background:#1c1c1f;flex-shrink:0;">
+                <!-- Row 1: Date + IB filters -->
+                <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:0.75rem;">
+                    <!-- Date From -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <label class="rpt-lbl">End Date From</label>
+                        <input type="date" id="report-from" class="rpt-input">
+                    </div>
+                    <!-- Date To -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <label class="rpt-lbl">End Date To</label>
+                        <input type="date" id="report-to" class="rpt-input">
+                    </div>
+                    <!-- IB ID autocomplete -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;position:relative;">
+                        <label class="rpt-lbl">IB ID</label>
+                        <input type="text" id="report-ib-id" placeholder="e.g. 1001" class="rpt-input"
+                            style="width:110px;" oninput="filterAcById()"
+                            onblur="setTimeout(()=>hideAC('ac-ib-id'),200)" onfocus="filterAcById()">
+                        <div id="ac-ib-id" class="ac-list" style="display:none;"></div>
+                    </div>
+                    <!-- IB Name autocomplete -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;position:relative;">
+                        <label class="rpt-lbl">IB Name</label>
+                        <input type="text" id="report-ib-name" placeholder="Search name…" class="rpt-input"
+                            style="width:160px;" oninput="filterAcByName()"
+                            onblur="setTimeout(()=>hideAC('ac-ib-name'),200)" onfocus="filterAcByName()">
+                        <div id="ac-ib-name" class="ac-list" style="display:none;"></div>
+                    </div>
+                </div>
+                <!-- Row 2: Status, Target, Buttons -->
+                <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;">
+                    <!-- Payment Status -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <label class="rpt-lbl">Payment Status</label>
+                        <select id="report-pay-status" class="rpt-input">
+                            <option value="">All Statuses</option>
+                            <option value="Approval Pending">🟡 Approval Pending</option>
+                            <option value="Payment Pending">🔵 Payment Pending</option>
+                            <option value="Paid">🟢 Paid</option>
+                            <option value="Rejected">🔴 Rejected</option>
+                        </select>
+                    </div>
+                    <!-- Target Type -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <label class="rpt-lbl">Target Type</label>
+                        <select id="report-target-type" class="rpt-input">
+                            <option value="">All Targets</option>
+                            <option value="net_deposit">Net Deposit</option>
+                            <option value="ftd">FTD</option>
+                            <option value="deposit">Deposit</option>
+                            <option value="pr">PR</option>
+                            <option value="marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <!-- Target Assignee -->
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <label class="rpt-lbl">Target Assignee</label>
+                        <select id="report-assignee" class="rpt-input" style="width:130px;">
+                            <option value="">All Assignees</option>
+                            <!-- populated by JS -->
+                        </select>
+                    </div>
+                    <!-- Buttons -->
+                    <button onclick="loadReport()"
+                        style="padding:0.6rem 1.1rem;background:#3b82f6;color:white;border:none;border-radius:0.5rem;cursor:pointer;font-weight:600;height:36px;align-self:flex-end;">
+                        <i class="fa fa-rotate"></i> Generate
+                    </button>
+                    <button onclick="resetReportFilters()"
+                        style="padding:0.6rem 0.9rem;background:#27272a;color:#a1a1aa;border:1px solid #3f3f46;border-radius:0.5rem;cursor:pointer;font-size:0.82rem;height:36px;align-self:flex-end;">
+                        <i class="fa fa-xmark"></i> Reset
+                    </button>
+                    <div style="margin-left:auto;display:flex;gap:0.5rem;align-self:flex-end;">
+                        <button onclick="exportReportExcel()"
+                            style="padding:0.6rem 1rem;background:#14532d;border:1px solid #16a34a;color:#4ade80;border-radius:0.5rem;cursor:pointer;font-size:0.82rem;font-weight:600;">
+                            <i class="fa fa-file-excel"></i> Excel
+                        </button>
+                        <button onclick="exportReportPDF()"
+                            style="padding:0.6rem 1rem;background:#450a0a;border:1px solid #dc2626;color:#f87171;border-radius:0.5rem;cursor:pointer;font-size:0.82rem;font-weight:600;">
+                            <i class="fa fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Body -->
+            <div id="report-body" style="flex:1;overflow-y:auto;padding:1.5rem;">
+                <div style="text-align:center;color:#52525b;padding:3rem;">
+                    <i class="fa fa-chart-bar" style="font-size:2.5rem;margin-bottom:1rem;display:block;"></i>
+                    Click "Generate" to load the report.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Target Modal ───────────────────────────────────────── -->
+    <div id="target-modal" class="modal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-bullseye" style="color:#6366f1;margin-right:0.5rem;"></i> Set Targets</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closeTargetModal()"></i>
+            </div>
+            <p style="color:#71717a;font-size:0.82rem;margin-bottom:1.25rem;">
+                Enable each target and optionally add details.
+            </p>
+            <div id="target-rows" style="display:flex;flex-direction:column;gap:0.85rem;">
+                <!-- generated by JS -->
+            </div>
+            <button onclick="saveTargets()" class="btn" style="margin-top:1.25rem;">
+                <i class="fa fa-check"></i> Confirm Targets
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Payments Modal ─────────────────────────────────────── -->
+    <div id="payments-modal" class="modal">
+        <div class="modal-content" style="max-width:580px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-money-bill-wave" style="color:#4ade80;margin-right:0.5rem;"></i> Set Payments</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closePaymentsModal()"></i>
+            </div>
+            <p style="color:#71717a;font-size:0.82rem;margin-bottom:1rem;">
+                Add payment due dates for this contract. Targets must be set first.
+            </p>
+            <div style="display:flex;justify-content:flex-end;margin-bottom:0.75rem;">
+                <button onclick="addPaymentRow()"
+                    style="padding:0.5rem 1rem;background:#052e16;border:1px solid #16a34a;color:#4ade80;border-radius:0.5rem;cursor:pointer;font-size:0.85rem;font-weight:600;">
+                    <i class="fa fa-plus"></i> Add Payment
+                </button>
+            </div>
+            <div id="payment-rows"
+                style="display:flex;flex-direction:column;gap:0.6rem;max-height:340px;overflow-y:auto;">
+                <!-- rows added by JS -->
+            </div>
+            <div id="payment-empty" style="text-align:center;color:#52525b;padding:2rem;font-size:0.9rem;">
+                No payments added yet. Click "+ Add Payment" to start.
+            </div>
+            <button onclick="savePayments()" class="btn" style="margin-top:1.25rem;">
+                <i class="fa fa-check"></i> Confirm Payments
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Contract Detail Modal (row click) ─────────────────── -->
+    <div id="contract-detail-modal" class="modal">
+        <div class="modal-content" style="max-width:660px;max-height:90vh;overflow-y:auto;">
+            <div class="modal-header">
+                <h2><i class="fa fa-file-contract" style="color:#a5b4fc;margin-right:0.5rem;"></i> Contract Details</h2>
+                <i class="fa fa-times" style="cursor:pointer;"
+                    onclick="document.getElementById('contract-detail-modal').style.display='none'"></i>
+            </div>
+            <div id="contract-detail-body" style="padding-top:0.5rem;">
+                <!-- filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Payment Detail Modal ──────────────────────────────── -->
+    <div id="payment-detail-modal" class="modal">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-receipt" style="color:#4ade80;margin-right:0.5rem;"></i> Payment Detail</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closePaymentDetailModal()"></i>
+            </div>
+            <div style="font-size:0.82rem;color:#71717a;margin-bottom:1.25rem;" id="pd-meta"></div>
+
+            <!-- Current Status Badge -->
+            <div id="pd-current-status" style="margin-bottom:1.25rem;"></div>
+
+            <!-- Approval Section -->
+            <div id="pd-approval-section" class="form-group">
+                <label>Approval Decision</label>
+                <div style="display:flex;gap:0.75rem;">
+                    <label
+                        style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.65rem 1.25rem;border-radius:0.5rem;border:2px solid #27272a;flex:1;justify-content:center;"
+                        id="pd-status-approved-label">
+                        <input type="radio" name="pd-status" id="pd-status-approved" value="Payment Pending"
+                            onchange="updatePdStatusStyle()">
+                        <i class="fa fa-check-circle" style="color:#4ade80;"></i> Approve
+                    </label>
+                    <label
+                        style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.65rem 1.25rem;border-radius:0.5rem;border:2px solid #27272a;flex:1;justify-content:center;"
+                        id="pd-status-rejected-label">
+                        <input type="radio" name="pd-status" id="pd-status-rejected" value="Rejected"
+                            onchange="updatePdStatusStyle()">
+                        <i class="fa fa-times-circle" style="color:#f87171;"></i> Reject
+                    </label>
+                </div>
+            </div>
+
+            <!-- Comment (reason for approval/rejection) -->
+            <div class="form-group">
+                <label>Comment / Reason</label>
+                <textarea id="pd-comment" rows="3"
+                    style="width:100%;background:#27272a;border:1px solid #3f3f46;border-radius:0.5rem;color:white;padding:0.75rem;resize:vertical;"
+                    placeholder="Reason for approval or rejection..."></textarea>
+            </div>
+
+            <!-- Pay Section (only visible after approval) -->
+            <div id="pd-pay-section"
+                style="display:none;border-top:1px solid #27272a;padding-top:1rem;margin-top:0.5rem;">
+                <div
+                    style="font-size:0.85rem;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.85rem;">
+                    <i class="fa fa-credit-card"></i> Payment Details
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="form-group">
+                    <label>Paid Amount</label>
+                    <input type="number" id="pd-paid-amount" placeholder="Actual amount paid" style="width:100%;">
+                </div>
+
+                <!-- Hash Link -->
+                <div class="form-group">
+                    <label>Transaction Hash / Link</label>
+                    <input type="text" id="pd-hash-link" placeholder="https://... or TX hash" style="width:100%;">
+                </div>
+
+                <!-- Payment Done checkbox -->
+                <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
+                    <input type="checkbox" id="pd-payment-done"
+                        style="width:20px;height:20px;accent-color:#4ade80;cursor:pointer;"
+                        onchange="updatePdStatusStyle()">
+                    <label for="pd-payment-done" style="cursor:pointer;color:#4ade80;font-weight:600;">
+                        <i class="fa fa-check-double"></i> Payment Done
+                    </label>
+                </div>
+            </div>
+
+            <div id="pd-readonly-notice"
+                style="display:none;background:#27272a;border-radius:0.5rem;padding:0.7rem 1rem;color:#f59e0b;font-size:0.82rem;margin-bottom:1rem;">
+                <i class="fa fa-lock"></i> You have view-only access to payment details.
+            </div>
+
+            <button id="pd-save-btn" onclick="savePaymentDetail()" class="btn">
+                <i class="fa fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Control Panel Modal (Admin only) ─────────────────── -->
+    <div id="cp-modal" class="modal">
+        <div class="modal-content" style="max-width:720px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-sliders" style="color:#8b5cf6;margin-right:0.5rem;"></i> Control Panel</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closeControlPanel()"></i>
+            </div>
+
+            <!-- Add User Form -->
+            <div style="background:#27272a;border-radius:0.75rem;padding:1.25rem;margin-bottom:1.5rem;">
+                <h3
+                    style="margin:0 0 1rem;font-size:0.95rem;color:#a1a1aa;text-transform:uppercase;letter-spacing:1px;">
+                    Add New User</h3>
+
+                <!-- Row 1: Email + Role + Telegram -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Email</label>
+                        <input type="email" id="cp-email" placeholder="user@example.com">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Tele. Chat ID (Optional)</label>
+                        <input type="text" id="cp-telegram" placeholder="e.g. 123456789">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Role (Department)</label>
+                        <select id="cp-role"
+                            style="background:#18181b;border:1px solid #3f3f46;padding:0.75rem 1rem;border-radius:0.5rem;color:white;width:100%;">
+                            <option value="IB">IB Department</option>
+                            <option value="Account Manager">Account Manager</option>
+                            <option value="Backoffice">Backoffice</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Password + Generate + Add -->
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:0.75rem;align-items:end;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Password</label>
+                        <div style="position:relative;">
+                            <input type="password" id="cp-password" placeholder="Enter or generate a password"
+                                style="padding-right:2.8rem;">
+                            <span onclick="toggleCpPassword()"
+                                style="position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-muted);">
+                                <i id="cp-eye-icon" class="fa fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <button onclick="generateAndFill()"
+                        style="padding:0.75rem 1rem;background:#27272a;border:1px solid #6366f1;color:#a5b4fc;border-radius:0.5rem;cursor:pointer;font-size:0.82rem;white-space:nowrap;">
+                        <i class="fa fa-wand-magic-sparkles"></i> Generate
+                    </button>
+                    <button onclick="addUser()"
+                        style="padding:0.75rem 1.25rem;background:#6366f1;color:white;border:none;border-radius:0.5rem;cursor:pointer;font-weight:600;white-space:nowrap;">
+                        <i class="fa fa-plus"></i> Add User
+                    </button>
+                </div>
+
+                <!-- Generated password display -->
+                <div id="cp-generated-box"
+                    style="display:none;margin-top:0.75rem;background:#18181b;border:1px solid #3f3f46;border-radius:0.5rem;padding:0.6rem 1rem;font-size:0.85rem;color:#a5b4fc;">
+                    <span style="color:#71717a;">Generated password:</span>
+                    <strong id="cp-generated-pw" style="margin-left:0.5rem;font-family:monospace;"></strong>
+                    <span onclick="copyGeneratedPw()" style="margin-left:0.75rem;cursor:pointer;color:#6366f1;"
+                        title="Copy">
+                        <i class="fa fa-copy"></i>
+                    </span>
+                </div>
+
+                <p id="cp-error" style="color:#ef4444;font-size:0.8rem;margin-top:0.5rem;display:none;"></p>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Telegram ID</th>
+                            <th>Role</th>
+                            <th>Added On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cp-users-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div id="role-modal" class="modal">
+        <div class="modal-content" style="max-width:380px;">
+            <div class="modal-header">
+                <h2>Edit User</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closeRoleModal()"></i>
+            </div>
+            <input type="hidden" id="role-user-id">
+            <p id="role-user-email" style="color:#a1a1aa;margin-bottom:1rem;font-size:0.9rem;"></p>
+            <div class="form-group">
+                <label>New Role</label>
+                <select id="role-select"
+                    style="width:100%;background:#27272a;border:1px solid #3f3f46;padding:0.75rem;border-radius:0.5rem;color:white;">
+                    <option value="IB">IB Department</option>
+                    <option value="Account Manager">Account Manager</option>
+                    <option value="Backoffice">Backoffice</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Telegram Chat ID</label>
+                <input type="text" id="role-telegram" placeholder="Optional" style="width:100%;margin-bottom:0.75rem;">
+            </div>
+            <button onclick="saveRole()" class="btn">Save</button>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="reset-pw-modal" class="modal">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-key" style="color:#0f766e;margin-right:0.5rem;"></i> Reset Password</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closeResetPwModal()"></i>
+            </div>
+            <p id="reset-pw-email" style="color:#a1a1aa;margin-bottom:1rem;font-size:0.9rem;"></p>
+            <div class="form-group">
+                <label>New Password</label>
+                <div style="position:relative;">
+                    <input type="password" id="reset-pw-input" placeholder="Enter new password"
+                        style="padding-right:2.8rem;">
+                    <span
+                        onclick="this.previousElementSibling.type = this.previousElementSibling.type==='password'?'text':'password'; this.querySelector('i').className = this.previousElementSibling.type==='text'?'fa fa-eye-slash':'fa fa-eye'"
+                        style="position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-muted);">
+                        <i class="fa fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+                <button onclick="generateAndFillReset()"
+                    style="flex:1;padding:0.75rem;background:#27272a;border:1px solid #6366f1;color:#a5b4fc;border-radius:0.5rem;cursor:pointer;font-size:0.85rem;">
+                    <i class="fa fa-wand-magic-sparkles"></i> Generate
+                </button>
+                <button onclick="saveResetPassword()" class="btn" style="flex:1;">
+                    Save Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Add/Edit Modal -->
+    <div id="camp-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="camp-modal-title">Add Campaign</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closeCampModal()"></i>
+            </div>
+            <form id="camp-form">
+                <input type="hidden" id="camp-edit-id">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label>IB ID (Numbers only)</label>
+                        <input type="number" id="camp-ib-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>IB Name</label>
+                        <input type="text" id="camp-name" placeholder="e.g. Ali Ahmadi">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label>IB Manager</label>
+                        <select id="camp-ib-manager"
+                            style="width:100%;background:#27272a;border:1px solid #3f3f46;padding:0.75rem;border-radius:0.5rem;color:white;">
+                            <option value="Mani">Mani</option>
+                            <option value="Niki">Niki</option>
+                            <option value="Arash">Arash</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label>Campaign Start</label>
+                        <input type="date" id="camp-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Campaign End</label>
+                        <input type="date" id="camp-end" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Offer</label>
+                    <input type="text" id="camp-offer" placeholder="e.g. 50% commission boost">
+                </div>
+                <div class="form-group">
+                    <label>Keypoints</label>
+                    <textarea id="camp-keypoints" rows="3"
+                        style="width:100%;background:#27272a;border:1px solid #3f3f46;border-radius:0.5rem;color:white;padding:0.75rem;resize:vertical;"
+                        placeholder="Key highlights of this campaign..."></textarea>
+                </div>
+                <button type="submit" class="btn">Save Campaign</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Campaign Detail Popup ─────────────────────────────── -->
+    <div id="camp-detail-modal" class="modal">
+        <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-chart-bar" style="color:#6366f1;margin-right:0.5rem;"></i> Campaign Details</h2>
+                <i class="fa fa-times" style="cursor:pointer;"
+                    onclick="document.getElementById('camp-detail-modal').style.display='none'"></i>
+            </div>
+            <div id="camp-detail-body" style="display:grid;gap:1rem;"></div>
+        </div>
+    </div>
+
+    <!-- ── Download Filter Modal ──────────────────────────────── -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content" style="max-width:440px;">
+            <div class="modal-header">
+                <h2 id="dl-modal-title"><i class="fa fa-download" style="color:#6366f1;margin-right:0.5rem;"></i> Export
+                    Campaigns</h2>
+                <i class="fa fa-times" style="cursor:pointer;"
+                    onclick="document.getElementById('download-modal').style.display='none'"></i>
+            </div>
+            <input type="hidden" id="dl-format">
+
+            <div style="display:flex;flex-direction:column;gap:1.1rem;">
+                <!-- Status filter -->
+                <div class="form-group" style="margin:0;">
+                    <label>Status Filter</label>
+                    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.4rem;">
+                        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;color:#d4d4d8;">
+                            <input type="radio" name="dl-status" value="all" checked> All
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;color:#4ade80;">
+                            <input type="radio" name="dl-status" value="active"> Active only
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;color:#f87171;">
+                            <input type="radio" name="dl-status" value="deactive"> Deactive only
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Date range -->
+                <div class="form-group" style="margin:0;">
+                    <label>Date Range (optional — filters by Campaign Start)</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.4rem;">
+                        <div>
+                            <label style="font-size:0.75rem;color:#71717a;">From</label>
+                            <input type="date" id="dl-from"
+                                style="width:100%;background:#27272a;border:1px solid #3f3f46;padding:0.5rem;border-radius:0.4rem;color:white;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem;color:#71717a;">To</label>
+                            <input type="date" id="dl-to"
+                                style="width:100%;background:#27272a;border:1px solid #3f3f46;padding:0.5rem;border-radius:0.4rem;color:white;">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="runExport()" class="btn" style="margin-top:0.5rem;">
+                    <i class="fa fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,885 @@
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-dark: #09090b;
+    --bg-card: #18181b;
+    --text-main: #fafafa;
+    --text-muted: #a1a1aa;
+    --border: #27272a;
+    --accent: #ec4899;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Glassmorphism Background */
+.bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle at 50% -20%, #1e1b4b, var(--bg-dark) 70%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Login Page Styling */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card h1 {
+    font-size: 1.875rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.login-card p {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.form-group input {
+    width: 100%;
+    background: #27272a;
+    border: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: white;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* Dashboard Styling */
+.dashboard {
+    display: none;
+    /* Hidden by default */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logout-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+/* Table Controls */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    position: relative;
+    max-width: 400px;
+}
+
+.search-box input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 0.6rem 2.5rem;
+    border-radius: 0.5rem;
+    color: white;
+}
+
+.search-box i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+/* Table Card */
+.table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #27272a;
+    text-align: left;
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+tr:hover {
+    background: #1f2937;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.page-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile first (≤ 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* ── Container ── */
+    .container {
+        padding: 1rem 0.75rem;
+    }
+
+    /* ── Header ── */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    #control-panel-btn {
+        font-size: 0.78rem !important;
+        padding: 0.35rem 0.7rem !important;
+    }
+
+    /* ── Tabs ── */
+    #dashboard-page>div:nth-child(2) {
+        /* tab bar */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #tab-reminder,
+    #tab-campaigns {
+        font-size: 0.82rem !important;
+        padding: 0.5rem 1rem !important;
+        white-space: nowrap;
+    }
+
+    /* ── Controls bar ── */
+    .controls {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+
+    .controls>div:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .controls .btn,
+    .controls button {
+        font-size: 0.8rem !important;
+        padding: 0.5rem 0.9rem !important;
+    }
+
+    /* ── Tables — horizontal scroll ── */
+    .table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0.75rem;
+    }
+
+    table {
+        min-width: 640px;
+    }
+
+    th,
+    td {
+        padding: 0.65rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .page-btn {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+    }
+
+    /* ── Modals — near full-screen ── */
+    .modal-content {
+        width: 96% !important;
+        max-width: 96% !important;
+        padding: 1.25rem 1rem;
+        margin: 0.5rem;
+        max-height: 92vh;
+    }
+
+    .modal-header h2 {
+        font-size: 1rem;
+    }
+
+    .modal-content form .form-group {
+        margin-bottom: 1rem;
+    }
+
+    /* Grid forms inside modals → single column */
+    .modal-content div[style*="grid-template-columns: 1fr 1fr"],
+    .modal-content div[style*="grid-template-columns:1fr 1fr"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    /* ── Control Panel ── */
+    #cp-modal .modal-content div[style*="grid-template-columns"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.6rem !important;
+    }
+
+    /* ── Login card ── */
+    .login-card {
+        padding: 1.75rem 1.25rem;
+        margin: 1rem;
+    }
+
+    /* ── Calendar ── */
+    #calendar-container .cal-day {
+        min-height: 60px;
+        padding: 0.25rem 0.3rem;
+    }
+
+    .cal-day-num {
+        font-size: 0.7rem;
+    }
+
+    .cal-chip {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+    }
+
+    .cal-dow {
+        font-size: 0.6rem;
+        padding: 0.2rem 0;
+    }
+
+    /* Calendar nav title */
+    #cal-title {
+        font-size: 0.9rem;
+    }
+
+    /* ── Campaign sort selector ── */
+    #camp-sort {
+        width: 100%;
+    }
+
+    /* ── Download buttons ── */
+    #section-campaigns>div:last-child {
+        justify-content: flex-start !important;
+        flex-wrap: wrap;
+    }
+
+    /* ── Today's reminders heading ── */
+    #section-reminder h2 {
+        font-size: 1rem;
+    }
+
+    /* ── Action icon buttons in table ── */
+    td div[style*="gap:4px"] button {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 10px !important;
+    }
+}
+
+/* ── Extra small phones ≤ 420px ── */
+@media (max-width: 420px) {
+
+    th,
+    td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.75rem;
+    }
+
+    .modal-content {
+        padding: 1rem 0.75rem;
+    }
+
+    #cal-title {
+        font-size: 0.8rem;
+    }
+
+    header h1 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ── Touch targets — always large enough ── */
+button,
+a,
+.cal-chip,
+.page-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* ── Scrollable table wrapper (also applies on desktop) ── */
+.table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f46 transparent;
+}
+
+.table-card::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-card::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-card::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 2px;
+}
+
+/* ── iOS safe-area padding ── */
+@supports (padding: env(safe-area-inset-bottom)) {
+    body {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .login-container {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* ── Mobile card view for tables (≤ 520px) ──
+   Converts rows into stacked labeled cards              */
+@media (max-width: 520px) {
+
+    .table-card table,
+    .table-card thead,
+    .table-card tbody,
+    .table-card th,
+    .table-card td,
+    .table-card tr {
+        display: block;
+    }
+
+    .table-card table {
+        min-width: unset;
+    }
+
+    .table-card thead tr {
+        display: none;
+    }
+
+    /* hide column headers */
+
+    .table-card tbody tr {
+        background: #18181b;
+        border: 1px solid #27272a;
+        border-radius: 0.75rem;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .table-card tbody tr:hover {
+        background: #1f2937;
+    }
+
+    .table-card td {
+        padding: 0.3rem 0;
+        border: none;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        border-bottom: 1px solid #27272a3a;
+    }
+
+    .table-card td:last-child {
+        border-bottom: none;
+    }
+
+    /* Data label from data-label attribute */
+    .table-card td::before {
+        content: attr(data-label);
+        font-size: 0.68rem;
+        color: #71717a;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        min-width: 90px;
+        padding-top: 1px;
+    }
+
+    /* Action buttons cell */
+    .table-card td:last-child::before {
+        display: none;
+    }
+
+    .table-card td:last-child {
+        justify-content: flex-end;
+        padding-top: 0.4rem;
+    }
+}
+
+/* ── Date input calendar icon ────────────────────────────────
+   Makes the calendar picker icon clearly visible & clickable  */
+input[type="date"] {
+    color-scheme: dark;
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM7 12h5v5H7z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px;
+    filter: none;
+    opacity: 1;
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: rgba(99, 102, 241, 0.2);
+    transform: scale(1.15);
+}
+
+/* ── Calendar View ─────────────────────────────────────────── */
+.cal-dow {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0;
+}
+
+.cal-day {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 0.6rem;
+    min-height: 100px;
+    padding: 0.4rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    transition: border-color 0.15s;
+}
+
+.cal-day:hover {
+    border-color: #3f3f46;
+}
+
+.cal-day.other-month {
+    opacity: 0.35;
+}
+
+.cal-day.today {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.cal-day-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #a1a1aa;
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cal-day.today .cal-day-num {
+    color: #818cf8;
+}
+
+.cal-add-btn {
+    background: none;
+    border: none;
+    color: #6366f1;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.cal-day:hover .cal-add-btn {
+    opacity: 1;
+}
+
+.cal-chip {
+    background: #312e81;
+    color: #c7d2fe;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    padding: 2px 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.12s;
+    border-left: 3px solid #6366f1;
+}
+
+.cal-chip:hover {
+    background: #3730a3;
+}
+
+/* ── Report Filter Helpers ──────────────────────── */
+.rpt-lbl {
+    font-size: 0.72rem;
+    color: #71717a;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.rpt-input {
+    background: #18181b;
+    border: 1px solid #3f3f46;
+    border-radius: 0.45rem;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.83rem;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.rpt-input:focus {
+    border-color: #6366f1;
+}
+
+.rpt-input option {
+    background: #18181b;
+}
+
+/* Autocomplete dropdown */
+.ac-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: #1c1c1f;
+    border: 1px solid #3f3f46;
+    border-radius: 0.5rem;
+    min-width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.ac-item {
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: #e4e4e7;
+    transition: background 0.12s;
+    white-space: nowrap;
+}
+
+.ac-item:hover {
+    background: #27272a;
+    color: #6366f1;
+}
+
+.ac-item.ac-no-match {
+    color: #52525b;
+    cursor: default;
+}
+
+.ac-item.ac-no-match:hover {
+    background: transparent;
+    color: #52525b;
+}
+
+/* Payment Calendar */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #27272a;
+    border: 1px solid #27272a;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.cal-header {
+    background: #18181b;
+    padding: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: #a1a1aa;
+    font-size: 0.8rem;
+}
+
+.cal-day {
+    background: #09090b;
+    min-height: 100px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.cal-day.other-month {
+    background: #111113;
+    opacity: 0.5;
+}
+
+.cal-day.today {
+    background: #1e1b4b;
+}
+
+.cal-date {
+    font-size: 0.8rem;
+    color: #71717a;
+    margin-bottom: 0.25rem;
+    text-align: right;
+    font-weight: 600;
+}
+
+.cal-day.today .cal-date {
+    color: #818cf8;
+}
+
+.cal-payment {
+    background: #1f1f23;
+    border: 1px solid #3f3f46;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.15s;
+}
+
+.cal-payment:hover {
+    background: #27272a;
+}
+
+.cal-pay-status-Paid {
+    border-left: 3px solid #4ade80;
+}
+
+.cal-pay-status-Approval-Pending {
+    border-left: 3px solid #fbbf24;
+}
+
+.cal-pay-status-Payment-Pending {
+    border-left: 3px solid #60a5fa;
+}
+
+.cal-pay-status-Rejected {
+    border-left: 3px solid #f87171;
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .cal-header {
+        display: none;
+    }
+
+    .cal-day {
+        min-height: auto;
+        border-bottom: 1px solid #27272a;
+    }
+
+    .cal-day.other-month {
+        display: none;
+    }
+}

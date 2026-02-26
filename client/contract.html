@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Detail — Opo IB Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #09090b;
+            color: #fafafa;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        .page-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            color: #a1a1aa;
+            padding: 0.6rem 1.1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.15s;
+        }
+
+        .back-btn:hover {
+            background: #3f3f46;
+            color: #fafafa;
+        }
+
+        .share-btn {
+            background: #1e1b4b;
+            border: 1px solid #4338ca;
+            color: #a5b4fc;
+            padding: 0.6rem 1.1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.15s;
+        }
+
+        .share-btn:hover {
+            background: #312e81;
+        }
+
+        .contract-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f4f4f5;
+            flex: 1;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 0.65rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .info-label {
+            color: #71717a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            color: #f4f4f5;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-block {
+            margin-bottom: 1.75rem;
+        }
+
+        .target-card {
+            background: #1e1b4b;
+            border: 1px solid #3730a3;
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .target-label {
+            color: #a5b4fc;
+            font-weight: 700;
+        }
+
+        .target-detail {
+            color: #d4d4d8;
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            border-top: 1px dashed #4338ca;
+            padding-top: 0.4rem;
+        }
+
+        .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .payments-table thead tr {
+            background: #27272a;
+        }
+
+        .payments-table th {
+            padding: 10px 12px;
+            text-align: left;
+            color: #71717a;
+            font-weight: 600;
+        }
+
+        .payments-table td {
+            padding: 10px 12px;
+        }
+
+        .payments-table tbody tr {
+            border-top: 1px solid #27272a;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .payments-table tbody tr:hover {
+            background: #1f1f23;
+        }
+
+        .status-badge {
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .note-box {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 0.65rem;
+            padding: 1rem;
+        }
+
+        .note-label {
+            color: #71717a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-text {
+            color: #d4d4d8;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .contract-link {
+            color: #6366f1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem;
+            color: #52525b;
+        }
+
+        .loading-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem;
+            color: #f87171;
+        }
+
+        .error-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        @media (max-width:640px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .page-wrap {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="page-wrap">
+        <div id="contract-loading" class="loading-state">
+            <i class="fa fa-spinner fa-spin"></i>
+            Loading contract details...
+        </div>
+
+        <div id="contract-error" class="error-state" style="display:none;">
+            <i class="fa fa-triangle-exclamation"></i>
+            <div id="error-message">Contract not found or access denied.</div>
+            <a href="/" class="back-btn" style="margin-top:1rem;display:inline-flex;">
+                <i class="fa fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div id="contract-content" style="display:none;">
+            <!-- Top bar -->
+            <div class="top-bar">
+                <a href="/" class="back-btn"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                <div class="contract-title" id="page-title"></div>
+                <button class="share-btn" onclick="copyShareLink()">
+                    <i class="fa fa-share-nodes"></i> Share
+                </button>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="info-grid" id="info-grid"></div>
+
+            <!-- Contract File -->
+            <div id="contract-file-link"></div>
+
+            <!-- Reminder Note -->
+            <div id="reminder-note-section" class="section-block"></div>
+
+            <!-- Targets -->
+            <div class="section-block">
+                <div class="section-title" style="color:#a5b4fc;">
+                    <i class="fa fa-bullseye"></i> Targets
+                </div>
+                <div id="targets-container"></div>
+            </div>
+
+            <!-- Payments -->
+            <div class="section-block">
+                <div class="section-title" style="color:#4ade80;">
+                    <i class="fa fa-money-bill-wave"></i> Payments
+                    <span id="payments-hint"
+                        style="color:#71717a;font-size:0.72rem;font-weight:400;margin-left:0.5rem;"></span>
+                </div>
+                <div id="payments-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Detail Modal (same as in index.html) -->
+    <div id="payment-detail-modal" class="modal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h2><i class="fa fa-receipt" style="color:#4ade80;margin-right:0.5rem;"></i> Payment Detail</h2>
+                <i class="fa fa-times" style="cursor:pointer;" onclick="closePaymentDetailModal()"></i>
+            </div>
+            <div style="font-size:0.82rem;color:#71717a;margin-bottom:1.25rem;" id="pd-meta"></div>
+
+            <div id="pd-current-status" style="margin-bottom:1.25rem;"></div>
+
+            <div id="pd-approval-section" class="form-group">
+                <label>Approval Decision</label>
+                <div style="display:flex;gap:0.75rem;">
+                    <label
+                        style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.65rem 1.25rem;border-radius:0.5rem;border:2px solid #27272a;flex:1;justify-content:center;"
+                        id="pd-status-approved-label">
+                        <input type="radio" name="pd-status" id="pd-status-approved" value="Payment Pending"
+                            onchange="updatePdStatusStyle()">
+                        <i class="fa fa-check-circle" style="color:#4ade80;"></i> Approve
+                    </label>
+                    <label
+                        style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.65rem 1.25rem;border-radius:0.5rem;border:2px solid #27272a;flex:1;justify-content:center;"
+                        id="pd-status-rejected-label">
+                        <input type="radio" name="pd-status" id="pd-status-rejected" value="Rejected"
+                            onchange="updatePdStatusStyle()">
+                        <i class="fa fa-times-circle" style="color:#f87171;"></i> Reject
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Comment / Reason</label>
+                <textarea id="pd-comment" rows="3"
+                    style="width:100%;background:#27272a;border:1px solid #3f3f46;border-radius:0.5rem;color:white;padding:0.75rem;resize:vertical;"
+                    placeholder="Reason for approval or rejection..."></textarea>
+            </div>
+
+            <div id="pd-pay-section"
+                style="display:none;border-top:1px solid #27272a;padding-top:1rem;margin-top:0.5rem;">
+                <div
+                    style="font-size:0.85rem;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.85rem;">
+                    <i class="fa fa-credit-card"></i> Payment Details
+                </div>
+                <div class="form-group">
+                    <label>Paid Amount</label>
+                    <input type="number" id="pd-paid-amount" placeholder="Actual amount paid" style="width:100%;">
+                </div>
+                <div class="form-group">
+                    <label>Transaction Hash / Link</label>
+                    <input type="text" id="pd-hash-link" placeholder="https://... or TX hash" style="width:100%;">
+                </div>
+                <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
+                    <input type="checkbox" id="pd-payment-done"
+                        style="width:20px;height:20px;accent-color:#4ade80;cursor:pointer;"
+                        onchange="updatePdStatusStyle()">
+                    <label for="pd-payment-done" style="cursor:pointer;color:#4ade80;font-weight:600;">
+                        <i class="fa fa-check-double"></i> Payment Done
+                    </label>
+                </div>
+            </div>
+
+            <div id="pd-readonly-notice"
+                style="display:none;background:#27272a;border-radius:0.5rem;padding:0.7rem 1rem;color:#f59e0b;font-size:0.82rem;margin-bottom:1rem;">
+                <i class="fa fa-lock"></i> You have view-only access to payment details.
+            </div>
+
+            <button id="pd-save-btn" onclick="savePaymentDetail()" class="btn">
+                <i class="fa fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        const currentUser = localStorage.getItem('ib_user') || '';
+        const currentRole = localStorage.getItem('ib_role') || '';
+
+        const TARGET_KEYS = [
+            { key: 'net_deposit', label: 'Net Deposit' },
+            { key: 'ftd', label: 'FTD' },
+            { key: 'deposit', label: 'Deposit' },
+            { key: 'pr', label: 'PR' },
+            { key: 'marketing', label: 'Marketing' },
+        ];
+
+        let _contractData = null;
+        let _pdContractId = null;
+        let _pdPayIndex = null;
+
+        // ── Get contract ID from URL ──
+        const urlParams = new URLSearchParams(window.location.search);
+        const contractId = urlParams.get('id');
+
+        // ── Auth check ──
+        if (!currentUser) {
+            showError('You are not logged in. Please <a href="/" style="color:#6366f1;">sign in</a> first.');
+        } else if (!contractId) {
+            showError('No contract ID specified in URL.');
+        } else {
+            loadContract(contractId);
+        }
+
+        async function loadContract(id) {
+            try {
+                const res = await fetch(`${API_BASE}/ib-reminders/${id}`, {
+                    headers: { 'X-User-Email': currentUser }
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    showError(data.message || 'Contract not found.');
+                    return;
+                }
+                _contractData = data.contract;
+                renderContract(_contractData);
+            } catch (e) {
+                showError('Failed to load contract. Please check your connection.');
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('contract-loading').style.display = 'none';
+            document.getElementById('contract-error').style.display = 'block';
+            document.getElementById('error-message').innerHTML = msg;
+        }
+
+        function renderContract(r) {
+            document.getElementById('contract-loading').style.display = 'none';
+            document.getElementById('contract-content').style.display = 'block';
+
+            // Page title
+            document.title = `IB ${r.ib_id} — ${r.name || 'Contract'} — Opo IB Portal`;
+            document.getElementById('page-title').innerHTML =
+                `<i class="fa fa-file-contract" style="color:#6366f1;margin-right:0.5rem;"></i>
+             IB ${r.ib_id} ${r.name ? '— ' + r.name : ''}`;
+
+            // Status badge
+            const today = new Date().toISOString().slice(0, 10);
+            const active = r.end_date >= today;
+            const statusHtml = `<span style="background:${active ? '#052e16' : '#1c1917'};color:${active ? '#4ade80' : '#78716c'};border-radius:999px;padding:3px 10px;font-size:0.75rem;font-weight:700;">${active ? 'Active' : 'Expired'}</span>`;
+
+            // Info grid
+            const fields = [
+                ['IB ID', r.ib_id],
+                ['Name', r.name || '—'],
+                ['Status', statusHtml],
+                ['Start Date', r.start_date],
+                ['End Date', r.end_date],
+                ['Reminder Date', r.reminder_date],
+                ['Created By', r.created_by],
+                ['Created At', r.created_at ? r.created_at.slice(0, 16) : '—'],
+                ['Email Sent', r.is_sent ? '<span style="color:#4ade80;"><i class="fa fa-check-circle"></i> Yes</span>' : '<span style="color:#fbbf24;"><i class="fa fa-clock"></i> Pending</span>'],
+            ];
+            document.getElementById('info-grid').innerHTML = fields.map(([l, v]) =>
+                `<div class="info-card">
+                <div class="info-label">${l}</div>
+                <div class="info-value">${v}</div>
+            </div>`
+            ).join('');
+
+            // Contract file
+            document.getElementById('contract-file-link').innerHTML = r.contract_path
+                ? `<a href="http://localhost:5000/${r.contract_path}" target="_blank" class="contract-link">
+                <i class="fa fa-file-pdf"></i> View Contract File
+            </a>`
+                : '';
+
+            // Reminder note
+            document.getElementById('reminder-note-section').innerHTML = r.reminder_text
+                ? `<div class="note-box">
+                <div class="note-label">Reminder Note</div>
+                <div class="note-text">${escapeHtml(r.reminder_text)}</div>
+            </div>`
+                : '';
+
+            // Targets
+            let targets = {};
+            try { targets = JSON.parse(r.targets || '{}'); } catch (e) { }
+            const activeTargets = TARGET_KEYS.filter(t => targets[t.key]?.enabled);
+            document.getElementById('targets-container').innerHTML = activeTargets.length > 0
+                ? activeTargets.map(t => `
+                <div class="target-card">
+                    <span class="target-label">${t.label}</span>
+                    ${targets[t.key].detail ? `<div class="target-detail">${escapeHtml(targets[t.key].detail)}</div>` : ''}
+                </div>`).join('')
+                : '<span style="color:#52525b;">No targets set.</span>';
+
+            // Payments
+            let payments = [];
+            try { payments = JSON.parse(r.payments || '[]'); } catch (e) { }
+            const targetLabelMap = Object.fromEntries(TARGET_KEYS.map(t => [t.key, t.label]));
+            const canEdit = (currentRole === 'Admin' || currentRole === 'Backoffice');
+
+            document.getElementById('payments-hint').textContent = payments.length > 0 ? '(click row for details)' : '';
+
+            if (payments.length === 0) {
+                document.getElementById('payments-container').innerHTML = '<span style="color:#52525b;">No payments set.</span>';
+            } else {
+                document.getElementById('payments-container').innerHTML = `
+                <table class="payments-table">
+                    <thead><tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                        ${canEdit ? '<th>Paid</th>' : ''}
+                    </tr></thead>
+                    <tbody>${payments.map((p, i) => {
+                    const st = p.status || 'Approval Pending';
+                    const cfg = {
+                        'Approval Pending': { bg: '#78350f', color: '#fbbf24', icon: 'fa-clock' },
+                        'Payment Pending': { bg: '#1e3a5f', color: '#60a5fa', icon: 'fa-hourglass-half' },
+                        'Paid': { bg: '#14532d', color: '#4ade80', icon: 'fa-check-circle' },
+                        'Rejected': { bg: '#450a0a', color: '#f87171', icon: 'fa-times-circle' },
+                    };
+                    const sc = cfg[st] || cfg['Approval Pending'];
+                    return `<tr onclick="openPaymentDetailModal(${r.id},${i})">
+                            <td style="color:#e4e4e7;">${p.date}</td>
+                            <td style="color:#4ade80;font-weight:600;">${Number(p.amount || 0).toLocaleString()}</td>
+                            <td style="color:#a5b4fc;">${targetLabelMap[p.target_key] || p.target_key}</td>
+                            <td><span class="status-badge" style="background:${sc.bg};color:${sc.color};"><i class="fa ${sc.icon}"></i> ${st}</span></td>
+                            ${canEdit ? `<td style="color:#d4d4d8;">${p.paid_amount ? Number(p.paid_amount).toLocaleString() : '—'}</td>` : ''}
+                        </tr>`;
+                }).join('')}</tbody>
+                </table>`;
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ── Share Link ──
+        function copyShareLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('📋 Link copied to clipboard!', 'success');
+            });
+        }
+
+        // ── Payment Detail Modal ──
+        function openPaymentDetailModal(contractId, payIdx) {
+            let payments = [];
+            try { payments = JSON.parse(_contractData.payments || '[]'); } catch (e) { }
+            const p = payments[payIdx];
+            if (!p) return;
+
+            _pdContractId = contractId;
+            _pdPayIndex = payIdx;
+
+            const targetLabelMap = Object.fromEntries(TARGET_KEYS.map(t => [t.key, t.label]));
+            document.getElementById('pd-meta').innerHTML =
+                `<i class="fa fa-calendar"></i> <strong>${p.date}</strong> &nbsp;|&nbsp;
+             <i class="fa fa-bullseye"></i> ${targetLabelMap[p.target_key] || p.target_key} &nbsp;|&nbsp;
+             Expected: <strong style="color:#4ade80;">${Number(p.amount || 0).toLocaleString()}</strong>`;
+
+            const status = p.status || 'Approval Pending';
+            const stCfg = {
+                'Approval Pending': { bg: '#78350f', color: '#fbbf24', icon: 'fa-clock' },
+                'Payment Pending': { bg: '#1e3a5f', color: '#60a5fa', icon: 'fa-hourglass-half' },
+                'Paid': { bg: '#14532d', color: '#4ade80', icon: 'fa-check-circle' },
+                'Rejected': { bg: '#450a0a', color: '#f87171', icon: 'fa-times-circle' },
+            };
+            const sc = stCfg[status] || stCfg['Approval Pending'];
+            document.getElementById('pd-current-status').innerHTML =
+                `<span style="background:${sc.bg};color:${sc.color};border-radius:999px;padding:4px 14px;font-size:0.82rem;font-weight:700;">
+                <i class="fa ${sc.icon}"></i> Current: ${status}
+            </span>`;
+
+            document.getElementById('pd-status-approved').checked = (status === 'Payment Pending' || status === 'Paid');
+            document.getElementById('pd-status-rejected').checked = (status === 'Rejected');
+            document.getElementById('pd-comment').value = p.comment || '';
+            document.getElementById('pd-paid-amount').value = p.paid_amount || '';
+            document.getElementById('pd-hash-link').value = p.hash_link || '';
+            document.getElementById('pd-payment-done').checked = (status === 'Paid');
+
+            const canEdit = (currentRole === 'Admin' || currentRole === 'Backoffice');
+            document.getElementById('pd-readonly-notice').style.display = canEdit ? 'none' : 'block';
+            document.getElementById('pd-save-btn').style.display = canEdit ? 'block' : 'none';
+            ['pd-paid-amount', 'pd-hash-link', 'pd-comment'].forEach(id =>
+                document.getElementById(id).disabled = !canEdit);
+            document.querySelectorAll('input[name="pd-status"]').forEach(inp => inp.disabled = !canEdit);
+            document.getElementById('pd-payment-done').disabled = !canEdit;
+
+            updatePdStatusStyle();
+            document.getElementById('payment-detail-modal').style.display = 'flex';
+        }
+
+        function closePaymentDetailModal() {
+            document.getElementById('payment-detail-modal').style.display = 'none';
+            _pdContractId = null; _pdPayIndex = null;
+        }
+
+        function updatePdStatusStyle() {
+            const approved = document.getElementById('pd-status-approved').checked;
+            const rejected = document.getElementById('pd-status-rejected').checked;
+            document.getElementById('pd-status-approved-label').style.borderColor = approved ? '#22c55e' : '#27272a';
+            document.getElementById('pd-status-rejected-label').style.borderColor = rejected ? '#ef4444' : '#27272a';
+            document.getElementById('pd-pay-section').style.display = approved ? 'block' : 'none';
+        }
+
+        async function savePaymentDetail() {
+            const approved = document.getElementById('pd-status-approved').checked;
+            const rejected = document.getElementById('pd-status-rejected').checked;
+            const paymentDone = document.getElementById('pd-payment-done').checked;
+
+            let status = 'Approval Pending';
+            if (rejected) status = 'Rejected';
+            else if (approved && paymentDone) status = 'Paid';
+            else if (approved) status = 'Payment Pending';
+
+            const paid_amount = document.getElementById('pd-paid-amount').value;
+            const hash_link = document.getElementById('pd-hash-link').value;
+            const comment = document.getElementById('pd-comment').value;
+
+            const res = await fetch(`${API_BASE}/ib-reminders/${_pdContractId}/payment/${_pdPayIndex}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-User-Email': currentUser },
+                body: JSON.stringify({ status, paid_amount, hash_link, comment })
+            });
+            const data = await res.json();
+            if (data.success) {
+                _contractData.payments = JSON.stringify(data.payments);
+                closePaymentDetailModal();
+                showToast('✅ Payment updated successfully.', 'success');
+                renderContract(_contractData);
+            } else {
+                showToast('❌ ' + (data.message || 'Failed to update payment.'), 'error');
+            }
+        }
+
+        // ── Toast ──
+        function showToast(msg, type = 'success') {
+            const existing = document.getElementById('app-toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.id = 'app-toast';
+            toast.textContent = msg;
+            toast.style.cssText = `
+            position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(20px);
+            background:${type === 'success' ? '#14532d' : '#450a0a'};
+            color:${type === 'success' ? '#4ade80' : '#f87171'};
+            border:1px solid ${type === 'success' ? '#166534' : '#7f1d1d'};
+            padding:0.75rem 1.5rem; border-radius:0.75rem;
+            font-size:0.87rem; font-weight:500;
+            box-shadow:0 8px 24px rgba(0,0,0,0.5);
+            z-index:9999; max-width:90vw; text-align:center;
+            opacity:0; transition:opacity 0.25s, transform 0.25s;
+        `;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+            });
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+
+</html>
