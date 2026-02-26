@@ -1,5 +1,5 @@
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '/api';
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour in ms
 
 let currentUser = localStorage.getItem('ib_user');
@@ -382,7 +382,7 @@ function openReminderDetailModal(r) {
         ${r.contract_path
             ? `<div style="background:#27272a;border-radius:0.6rem;padding:0.9rem 1.1rem;">
                 <div style="font-size:0.72rem;color:#71717a;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Contract</div>
-                <a href="http://localhost:5000/${r.contract_path}" target="_blank"
+                <a href="/${r.contract_path}" target="_blank"
                    style="color:#818cf8;font-size:0.85rem;">📎 View Contract</a>
                </div>` : ''}
         <div style="font-size:0.75rem;color:#52525b;text-align:right;">
@@ -441,13 +441,13 @@ function renderTable(reminders) {
         return;
     }
     tbody.innerHTML = reminders.map(r => `
-        <tr onclick="window.open('http://localhost:5000/contract.html?id=${r.id}','_blank')" style="cursor:pointer;" title="Click to open contract page">
+        <tr onclick="window.open('/contract.html?id=${r.id}','_blank')" style="cursor:pointer;" title="Click to open contract page">
             <td data-label="IB ID">${r.ib_id}</td>
             <td data-label="Name">${r.name || '—'}</td>
             <td data-label="Start Date">${r.start_date}</td>
             <td data-label="End Date">${r.end_date}</td>
             <td data-label="Contract" onclick="event.stopPropagation()">
-                ${r.contract_path ? `<a href="http://localhost:5000/${r.contract_path}" target="_blank" style="color: var(--primary);">View</a>` : 'None'}
+                ${r.contract_path ? `<a href="/${r.contract_path}" target="_blank" style="color: var(--primary);">View</a>` : 'None'}
             </td>
             <td data-label="Reminder Date">${r.reminder_date}</td>
             <td data-label="Status">
@@ -461,7 +461,7 @@ function renderTable(reminders) {
                     <button onclick="editItem(${r.id})" title="Edit" style="width:28px;height:28px;border-radius:6px;border:none;background:#3b82f6;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fa fa-pen"></i></button>
                     <button onclick="deleteItem(${r.id})" title="Delete" style="width:28px;height:28px;border-radius:6px;border:none;background:#ef4444;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fa fa-trash"></i></button>
                     <button onclick="sendManual(${r.id})" title="Send Email" style="width:28px;height:28px;border-radius:6px;border:none;background:#8b5cf6;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fa fa-paper-plane"></i></button>
-                    <button onclick="window.open('http://localhost:5000/api/email-preview?id=${r.id}','_blank')" title="Preview Email" style="width:28px;height:28px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fa fa-eye"></i></button>
+                    <button onclick="window.open('/api/email-preview?id=${r.id}','_blank')" title="Preview Email" style="width:28px;height:28px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fa fa-eye"></i></button>
                 </div>
             </td>
         </tr>
@@ -476,7 +476,7 @@ function renderTodaysTable(reminders) {
     }
     tbody.innerHTML = reminders.map(r => `
         <tr style="border-left: 4px solid var(--accent);">
-            <td data-label="IB ID"><a href="http://localhost:5000/contract.html?id=${r.id}" target="_blank" style="color:#6366f1;text-decoration:none;font-weight:600;">${r.ib_id}</a></td>
+            <td data-label="IB ID"><a href="/contract.html?id=${r.id}" target="_blank" style="color:#6366f1;text-decoration:none;font-weight:600;">${r.ib_id}</a></td>
             <td data-label="Reminder Date">${r.reminder_date}</td>
             <td data-label="Status">
                 <span style="color: ${r.is_sent ? '#22c55e' : '#f59e0b'}">
@@ -594,7 +594,7 @@ function renderPaymentCalendar(payments) {
             dayPayments.forEach(p => {
                 let statusClass = p.status.replace(/ /g, '-');
                 dayPaymentsHtml += `
-                    <div class="cal-payment cal-pay-status-${statusClass}" onclick="window.open('http://localhost:5000/contract.html?id=${p.contract_id}', '_blank')" title="${p.name} - ${p.status}">
+                    <div class="cal-payment cal-pay-status-${statusClass}" onclick="window.open('/contract.html?id=${p.contract_id}', '_blank')" title="${p.name} - ${p.status}">
                         <strong>${p.ib_id}</strong>: $${Number(p.amount || 0).toLocaleString()}
                     </div>
                 `;
@@ -824,7 +824,7 @@ function renderReportBody(d) {
 }
 
 function openContractDetailFromReport(contractId) {
-    window.open('http://localhost:5000/contract.html?id=' + contractId, '_blank');
+    window.open('/contract.html?id=' + contractId, '_blank');
 }
 
 
@@ -1129,7 +1129,7 @@ function showContractDetail(id) {
                     <div style="color:#f4f4f5;font-weight:500;">${v}</div>
                 </div>`).join('')}
         </div>
-        ${r.contract_path ? `<div style="margin-bottom:1rem;"><a href="http://localhost:5000/${r.contract_path}" target="_blank" style="color:#6366f1;"><i class="fa fa-file"></i> View Contract File</a></div>` : ''}
+        ${r.contract_path ? `<div style="margin-bottom:1rem;"><a href="/${r.contract_path}" target="_blank" style="color:#6366f1;"><i class="fa fa-file"></i> View Contract File</a></div>` : ''}
         ${r.reminder_text ? `<div style="background:#18181b;border:1px solid #27272a;border-radius:0.5rem;padding:1rem;margin-bottom:1.25rem;"><div style="color:#71717a;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">Reminder Note</div><div style="color:#d4d4d8;line-height:1.7;white-space:pre-wrap;">${r.reminder_text}</div></div>` : ''}
         <div style="margin-bottom:1rem;"><div style="color:#a5b4fc;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;"><i class="fa fa-bullseye"></i> Targets</div>${targetsHtml}</div>
         <div><div style="color:#4ade80;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;"><i class="fa fa-money-bill-wave"></i> Payments ${payments.length > 0 ? '<span style="color:#71717a;font-size:0.72rem;font-weight:400;margin-left:0.5rem;">(click row for details)</span>' : ''}</div>${paymentsHtml}</div>
@@ -1841,7 +1841,7 @@ function exportPDF(rows) {
     const dateFrom = document.getElementById('dl-from').value;
     const dateTo = document.getElementById('dl-to').value;
 
-    let url = `http://localhost:5000/api/ib-campaigns/export-pdf?status=${status}`;
+    let url = `/api/ib-campaigns/export-pdf?status=${status}`;
     if (dateFrom) url += `&date_from=${dateFrom}`;
     if (dateTo) url += `&date_to=${dateTo}`;
 
