@@ -20,15 +20,18 @@ jobs:
           # passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }} # optional
           script: |
             # 1. Navigate to the App directory on your server
-            cd /path/to/your/app/folder # ⚠️ REPLACE THIS WITH THE ACTUAL DIRECTORY PATH ON YOUR SERVER
+            cd /root/ib-reminder
 
             # 2. Pull the latest code
             git reset --hard
             git pull origin main
 
             # 3. Activate Virtual Environment and install dependencies
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            
             source venv/bin/activate
             pip install -r requirements.txt
 
-            # 4. Restart the Flask service (assuming you created a systemd service)
-            sudo systemctl restart ib-reminder.service # ⚠️ REPLACE WITH YOUR ACTUAL SERVICE NAME
+            # 4. Restart the Flask service via PM2
+            pm2 restart ecosystem.config.js
