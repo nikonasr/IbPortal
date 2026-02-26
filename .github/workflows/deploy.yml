@@ -15,8 +15,9 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }} # optional, but sometimes needed for encrypted keys
+          password: ${{ secrets.SERVER_PASSWORD }}
+          # key: ${{ secrets.SERVER_SSH_KEY }}
+          # passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }} # optional
           script: |
             # 1. Navigate to the App directory on your server
             cd /path/to/your/app/folder # ⚠️ REPLACE THIS WITH THE ACTUAL DIRECTORY PATH ON YOUR SERVER
