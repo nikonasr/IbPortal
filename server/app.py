@@ -37,6 +37,7 @@ SMTP_PORT      = int(os.getenv('SMTP_PORT', 465))
 SENDER_EMAIL   = os.getenv('SENDER_EMAIL', '')
 SENDER_PASSWORD= os.getenv('SENDER_PASSWORD', '')
 ALLOWED_EMAILS = [e.strip().lower() for e in os.getenv('ALLOWED_EMAILS', '').split(',') if e.strip()]
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
 # ────────────────────────────────────────────────────────────
 
 if not os.path.exists(UPLOAD_FOLDER):
@@ -189,8 +190,6 @@ def send_email(recipient, subject, reminder_data):
     except Exception as e:
         print(f"Error sending email to {recipient}: {str(e)}")
         return False
-
-TELEGRAM_BOT_TOKEN = '8609037495:AAHvOsTQks2uAvhNCigkaLGECdXK0D-cJB8'
 
 def send_telegram_message(chat_id, reminder_data):
     if not chat_id:
