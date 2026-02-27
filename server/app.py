@@ -1177,4 +1177,5 @@ def export_campaigns_pdf():
     )
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    port = int(os.getenv('PORT') or os.getenv('FLASK_PORT') or 5000)
+    app.run(host='0.0.0.0', port=port, debug=True)
